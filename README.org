@@ -1,0 +1,55 @@
+* Goal
+
+This app should allow the user to search for courses that are offered in Fall
+2018 at the University of Florida. These classes are fetched through the UF 
+API.
+
+The user can search through these courses by course name or course number.
+
+The UI for this page is heavily inspired by Bootcamp Assignment 2.
+
+* API Routes Used
+
+An example API call:
+
+=https://one.ufl.edu/apix/soc/schedule/?term=2188&category=CWSP=
+
+This fetches 50 'rows' (courses) from the database.
+
+** TODO How do you get /all/ of the courses? That seems like the simplest UI; don't want to search through a partial result.
+** DONE how do you get computer science courses?
+https://one.uf.edu/apix/soc/schedule/?category=CWSP&dept=19140000&term=2188
+** DONE how do you get later courses?
+with nothing, last course is ACG7978 with id = 030361
+To get later courses, have =?last-control-number=<foo>= where =<foo>= is the
+LCN returned by the last query.
+** DONE dept is a number. how can we translate b/w dept number and a readable name?
+   Two solutions. 
+
+   One is to grep through /all/ courses' sections and then build a map from a
+   (nice) dept. name to a dept. number. These seems nice in that this mapping is
+   unlikely to change. And, the user is able to access UF courses through our tool
+   as soon as one.uf has them. They don't have to also wait for our cron job. 
+   Simpler tools.
+*** DONE what tool should i use to build this mapping?
+    i think that it might be easier to do with a program since the LCN must be read
+    and used each time. well, bash could do this... but that mens learning =awk=
+    too. i think python would be a nice choice. or maybe =go=. get that type safety
+    going.
+*** DONE what happens when you get to the last item?
+*** DONE how do you 'merge' these multiple JSON objects?
+*** DONE how do you know when to stop querying these JSON objects?
+    Another is to store all of the courses in the database and then build queries
+    against them. One risk here is that this means that the course doesn't work for
+    later semesters without hitting all of the courses and then manually storing
+    that information. Which means future maintenance or, at least, a module that has
+    to run cron jobs. (When would these jobs even run?) This seems inelegant.
+
+** DONE how do you, in the UI, build a query module for the 'term'?
+* Preguntas
+Workflow is that:
+
+- pick a department
+- pick query. this loads the first page of stuff to query
+- there's a 'next' button that will load the next set of 50
+- you can filter the results using the things that you'd expect
